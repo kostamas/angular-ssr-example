@@ -1,0 +1,9 @@
+.router-section{
+  width: 900px;
+  height: 200px;
+  border: 1px;
+  background-color: beige;
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+}
