@@ -13,18 +13,40 @@ app.get('/', (req, res) => {
 
   res.send('Hello World!')
 });
-app.post('/pdf', function (req, res, next) {
+app.get('/pdf', function (req, res, next) {
 
-  var filePath = './server/p.pdf';
+  let filePath = './server/11.pdf';
 
-  var data = fs.readFileSync(filePath);
+  let data = fs.readFileSync(filePath);
 
-  var headers = {
-    'Content-type': 'application/octet-stream',
-    'Content-Disposition': 'attachment; filename=sample'
-  };
-  res.writeHead(200, headers);
-  res.end(data);
+  let base64Data = new Buffer(data).toString('base64');
+
+  res.end(base64Data);
 });
 
 app.listen(3000, () => console.log('Example app listening on port 3000!'));
+
+function b64toBlob(b64Data, contentType) {
+  contentType = contentType || '';
+  var sliceSize = 512;
+  b64Data = b64Data.replace(/^[^,]+,/, '');
+  b64Data = b64Data.replace(/\s/g, '');
+  let byteCharacters = window.atob(b64Data);
+  let byteArrays = [];
+
+  for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+    let slice = byteCharacters.slice(offset, offset + sliceSize);
+
+    let byteNumbers = new Array(slice.length);
+    for (let i = 0; i < slice.length; i++) {
+      byteNumbers[i] = slice.charCodeAt(i);
+    }
+
+    let byteArray = new Uint8Array(byteNumbers);
+
+    byteArrays.push(byteArray);
+  }
+
+  let blob = new Blob(byteArrays, {type: contentType});
+  return blob;
+}
